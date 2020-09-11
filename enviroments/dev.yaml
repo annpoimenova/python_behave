@@ -1,0 +1,5 @@
+first_test:
+  browser: chrome
+  url: https://www.instagram.com/
+  user_name: dev_user
+  data: "Hello Dev Enviroment"
