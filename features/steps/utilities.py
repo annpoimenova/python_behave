@@ -93,16 +93,9 @@ def launch_browser(context, browser):
         chrome_options.add_argument('--start-maximized')
         # chrome_options.add_argument('--headless')
         path_to_repo = os.getcwd()
-        system = platform.system()
-
-        if system == "Darwin":
-            system_folder = "mac64"
-        else:
-            system_folder = "linux"
-            chrome_options.add_argument('--headless')
-        context.driver.browser = webdriver.Chrome(
-            executable_path=path_to_repo + '/webdriver/' + system_folder + '/chromedriver',
-            chrome_options=chrome_options)
+        context.driver.browser = webdriver.Chrome(executable_path=path_to_repo + '/webdriver/mac64/chromedriver',
+                                                  chrome_options=chrome_options)
+    context.driver.browser.implicitly_wait(10)
 
     #DOCKER
     # desiredCapabilities = {

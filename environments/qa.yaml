@@ -1,5 +1,5 @@
+browser: chrome
 first_test:
-  browser: chrome
   url: https://www.instagram.com/
   user_name: qa_user
   data: "Hello Qa Enviroment"

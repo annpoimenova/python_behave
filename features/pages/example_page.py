@@ -1,6 +1,4 @@
-from features.utilities import *
-from selenium.webdriver.common.keys import Keys
-from time import sleep
+from features.steps.utilities import *
 from features.pages.base_page import BasePage
 
 

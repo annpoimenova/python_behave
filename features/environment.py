@@ -1,39 +1,54 @@
 from platform import python_version
 from pprint import pprint
-from features.utilities import *
+from features.steps.utilities import *
 from datetime import datetime as dt
-from zipfile import ZipFile
-import os
-from os.path import basename
+
+list_of_environments = ['local', 'dev', 'qa', 'beta']
+non_connection_failure = False
 
 
-list_of_environments = ['dev', 'qa']
-
-
+# -----------------------------------------------------------------------------
+# HOOKS:
+# -----------------------------------------------------------------------------
 def before_all(context):
     """
     Prepare the test environment at a global level.
     """
+    # print('\n********************************************************************')
+    utc_time, local_time = dt.isoformat(dt.utcnow()), dt.isoformat(dt.now())
+    # print('\nStarting test at UTC time: %s (local time: %s)\n' % (utc_time, local_time))
 
     active_tags = [item for sub_list in context.config.tags.ands for item in sub_list]
+    context.jira_update = True if 'jira_update' in active_tags else False
+    context.send_email = True if 'send_email' in active_tags else False
     env = [tag for tag in active_tags if tag in list_of_environments]
     env = 'dev' if env.__len__() == 0 else env[0]
     env_file = 'environments/{}.yaml'.format(env)
     config_file = load_config_file_yaml(file_name=env_file)
     set_test_config(config_file)
 
+    # print("Environments: {}\n".format(env))
+    # print("Configuration:\n ")
     if config_file is not None:
-
+        # print('OK')
         pprint(dict(config_file))
-
+    version = python_version()
+    # print("Version: {}".format(version))
     setup_python_path()
     start_testing(context)
+    context.gi_for_reporting.append(("Python version", version))
+    context.gi_for_reporting.append(("Testing Environment", env))
+    # context.env_file_name = env_file
+    # context.env = config_file
+    # print('\n********************************************************************')
+    # print('Running acceptance tests')
+    # print('********************************************************************')
 
 
 # def before_feature(context, feature):
 #     context.feature_result = dict()
-#
-#
+
+
 # def before_scenario(context):
 #     pass
 #
@@ -60,12 +75,10 @@ def after_step(context, step):
 
 
 def after_scenario(context, scenario):
-    global non_connection_failure
 
     for step_for_scenario in scenario.all_steps:
         if step_for_scenario.status == 'failed':
             save_screenshot(context)
-            non_connection_failure = True
             scenario.traceback = context.traceback
 
     scenario_dict = dict()
@@ -118,4 +131,5 @@ def after_feature(context, feature):
 
 
 # def after_all(context):
-#     pass
+#    pass
+

@@ -1,13 +1,13 @@
 from behave import *
-from features.utilities import *
+from features.steps.utilities import *
 from features.pages.example_page import ExamplePage
 
 
 @given(u'browser is launched')
 def step_impl(context):
-    # config = get_test_config()
-    launch_browser(context, browser="chrome")
-    init_web_pages(context, browser="chrome")
+    config = get_test_config()
+    launch_browser(context, browser=config['browser'])
+    init_web_pages(context, browser=config['browser'])
 
 
 @step('open Portal')
